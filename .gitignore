@@ -128,6 +128,8 @@ ENV/
 env.bak/
 venv.bak/
 
+#exclude data folder
+data/
 # Spyder project settings
 .spyderproject
 .spyproject
