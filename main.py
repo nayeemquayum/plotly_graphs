@@ -1,6 +1,7 @@
 #import libraries
 import pandas as pd
 import numpy as np
+import seaborn as sns
 import plotly.graph_objs as go
 import plotly.offline as pyo
 
@@ -11,7 +12,7 @@ deliveries_df = pd.read_csv('data/deliveries.csv')
 #print (deliveries_df.head())
 #merge the two dataframs by match id
 ipl = matches_df.merge(deliveries_df,left_on='id', right_on='match_id')
-print (f"ipl.info:{ipl.info()}")
+#print (f"ipl.info:{ipl.info()}")
 #umpire3 column is empty
 #print(f"missing data for umpire3 column:{ipl['umpire3'].isnull().sum()}")
 #so drop the column
@@ -50,7 +51,7 @@ top_50_outs=top_50_data.groupby('batsman')['player_dismissed'].agg('count').rese
 top_50=pd.merge(top_50_stat,top_50_outs)
 #print(top_50.head())
 top_50['Avg']= top_50['runs']/top_50['player_dismissed']
-#print(top_50.head())
+print(top_50.head())
 
 '''#Let's plot a scatter plot using plotly object
 #create trace
@@ -100,3 +101,52 @@ fig=go.Figure(data=data,
 #display the fig using pyo.plot function
 pyo.plot(fig,\
          filename='plotly_graphs.html')'''
+'''#Draw bar plots for top 10 ipl batsmen
+#1. Create trace
+trace_top_10= go.Bar(x=top_50.head(10).batsman,y=top_50.head(10).runs)
+#2. Add to data
+data=trace_top_10
+#3. Create layout
+layout=go.Layout(title='Top 10 run scorer',\
+                 xaxis={'title':'Batsman'},\
+                 yaxis={'title':'Runs'})
+#4. Create figure with layout and data(trace)
+fig=go.Figure(data=data,
+              layout=layout)
+#5. plot the figure
+pyo.plot(fig,filename='plotly_graphs.html')'''
+#load tips data
+tips= sns.load_dataset('tips')
+print (tips.head())
+'''#Draw bar plots
+#1. Create trace
+trace_tip= go.Bar(x=tips.day,y=tips.tip, name='Tip')
+trace_bill= go.Bar(x=tips.day,y=tips.total_bill, name='Total Bill')
+#2. Add to data
+data_tip=[trace_tip,trace_bill]
+#3. Create layout
+layout_tip=go.Layout(title='Tips by day',\
+                 xaxis={'title':'Day'},\
+                 yaxis={'title':'Tips'},
+                 barmode='relative')
+#4. Create figure with layout and data(trace)
+fig=go.Figure(data=data_tip,
+              layout=layout_tip)
+#5. plot the figure
+pyo.plot(fig,filename='plotly_graphs.html')'''
+#Draw bubble plot with three numerica data (dot position, size) and one categorical data
+#1. Create trace
+trace_tips= go.Scatter(x=tips.total_bill,y=tips.tip,\
+                  mode='markers',\
+                  marker={'size':tips['size']*10})
+#2.add trace to data
+tips_data=[trace_tips]
+#3.create the layout bor bubble plot
+tips_layout=go.Layout(title='Bubble plot for tips',\
+                 xaxis={'title':'Total Bill'},\
+                 yaxis={'title':'Tips'} )
+#4.create the figure using data and layout
+fig=go.Figure(data=tips_data,
+              layout=tips_layout)
+#5.display the fig using pyo.plot function
+pyo.plot(fig,filename='plotly_graphs.html')
